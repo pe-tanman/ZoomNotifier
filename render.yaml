@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: zoomnotifier
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 4 "zoomnotifier.webhook:create_app()"
+    envVars:
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_FROM_NUMBER
+        sync: false
+      - key: MY_PHONE_NUMBER
+        sync: false
+      - key: ZOOM_WEBHOOK_SECRET_TOKEN
+        sync: false
+      - key: ZOOM_PMI
+        sync: false
+      - key: IGNORE_PARTICIPANTS
+        sync: false
