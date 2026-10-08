@@ -2,15 +2,15 @@
 
 Calls your phone when someone joins your Zoom **Personal Meeting Room** (PMI).
 
-```
-Someone joins your PMI ──► Zoom webhook ──► this server ──► Twilio ──► your phone rings
-```
+Two ways it can find out someone joined:
 
-It reacts to people who:
-- join the meeting (`meeting.participant_joined`)
-- land in your waiting room (`meeting.participant_joined_waiting_room`)
-- wait for you to start the meeting (`meeting.participant_jbh_waiting`)
-- join before you, the host (`meeting.participant_jbh_joined`)
+```
+Email watcher (works on UT without approval):
+  Someone joins your PMI ──► Zoom emails you ──► watcher reads the email ──► Twilio ──► your phone rings
+
+Webhook (needs a Zoom app, which UT must approve):
+  Someone joins your PMI ──► Zoom webhook ──► this server ──► Twilio ──► your phone rings
+```
 
 Your own join is ignored, and a cooldown (5 minutes by default) stops a group of people from ringing your phone over and over.
 
