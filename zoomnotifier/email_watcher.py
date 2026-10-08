@@ -1,12 +1,14 @@
-"""Fallback for when your Zoom admin (e.g. UT) won't let you create a webhook app.
+"""Calls you when Zoom emails you that someone joined your meeting (no Zoom app needed).
 
 Zoom can email you when participants join your meeting before you do
 (Settings > Meeting > "Notify host when participants join the meeting before host").
 This script watches a mailbox over IMAP for those emails and calls you.
 
-Run:  python -m zoomnotifier.email_watcher
+Run:        python -m zoomnotifier.email_watcher
+Test call:  python -m zoomnotifier.email_watcher --test-call
 """
 
+import argparse
 import email
 import imaplib
 import logging
@@ -53,9 +55,18 @@ def check_once(imap: imaplib.IMAP4, notifier: Notifier, subject_pattern: str) ->
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--test-call", action="store_true",
+                        help="place one test call to MY_PHONE_NUMBER and exit")
+    args = parser.parse_args()
+
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     settings = Settings.from_env()
     notifier = Notifier(settings)
+    if args.test_call:
+        notifier.alert("test", "Test caller")
+        return
+
     host = os.environ.get("IMAP_HOST", "imap.gmail.com")
     user = os.environ["IMAP_USER"]
     password = os.environ["IMAP_PASSWORD"]
